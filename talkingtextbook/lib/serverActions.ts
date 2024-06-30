@@ -8,9 +8,8 @@ export async function getTextbooks() {
 	return textbooksDB.find().toArray();
 }
 
-export async function createTextbooks() {
+export async function createTextbooks(name: string) {
 	const { textbooksDB } = await connectToDatabase();
-	const { name } = z.object({ name: z.string() }).parse(await request.json());
 	const { insertedId } = await textbooksDB.insertOne({ name });
 	return insertedId;
 }
