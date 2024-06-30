@@ -9,8 +9,8 @@ export default function Home() {
 					<h1 className="text-2xl font-bold text-indigo-500">Talking Textbook</h1>
 				</div>
 			</header>
-			<main className="flex flex-grow flex-col items-center justify-center bg-gray-800 p-4">
-				<h2 className="mb-4 text-3xl font-semibold text-indigo-300">
+			<main className="flex flex-grow flex-col items-center justify-center bg-gray-800 pb-20">
+				<h2 className="mb-4 text-3xl font-semibold text-indigo-500">
 					RAG Chat powered by MongoDB Vector Search + LangChain
 				</h2>
 				<div className="grid grid-cols-2 gap-2">
