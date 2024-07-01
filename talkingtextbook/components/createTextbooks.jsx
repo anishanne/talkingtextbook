@@ -1,10 +1,19 @@
 import { useState } from "react";
 import { Dialog, DialogBackdrop, DialogPanel, DialogTitle } from "@headlessui/react";
 import { DocumentPlusIcon } from "@heroicons/react/24/outline";
+import { createTextbook, trainTextbook } from "@/lib/serverActions";
 
 export default function CreateTextbook({ open, setOpen }) {
 	const [status, setStatus] = useState(false);
-	const create = async () => {};
+	const [name, setName] = useState("");
+	const create = async () => {
+		setStatus("loading");
+		const id = createTextbook(name);
+		trainTextbook(
+			id,
+			"Hello\n\nWorld\nIam cool.\nThis is a test of the chunking system. It should split this text into multiple chunks.",
+		);
+	};
 	return (
 		<Dialog className="relative z-10" open={open} onClose={setOpen}>
 			<DialogBackdrop
@@ -38,6 +47,7 @@ export default function CreateTextbook({ open, setOpen }) {
 													id="name"
 													className="block w-full rounded-md border-0 bg-gray-800 py-1.5 text-gray-200 shadow-sm ring-1 ring-inset ring-gray-700 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
 													placeholder="English 101"
+													onChange={(e) => setName(e.target.value)}
 												/>
 											</div>
 										</div>
@@ -63,7 +73,7 @@ export default function CreateTextbook({ open, setOpen }) {
 								type="button"
 								className="inline-flex w-full justify-center rounded-md bg-indigo-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600 sm:col-start-2"
 								onClick={create}>
-								Create
+								{status === "loading" ? "Creating" : "Create"}
 							</button>
 							<button
 								type="button"
