@@ -1,13 +1,13 @@
 import { type Db, MongoClient } from "mongodb";
 import { Textbook, TextbookChunk } from "@/types";
+import { env } from "@/env";
 
 export const clientPromise =
-	process.env.NODE_ENV === "development" && globalThis.mongoClientPromise
+	env.NODE_ENV === "development" && globalThis.mongoClientPromise
 		? globalThis.mongoClientPromise
-		: new MongoClient(process.env.MONGODB_URI, {}).connect();
+		: new MongoClient(env.MONGODB_URI, {}).connect();
 
-if (process.env.NODE_ENV === "development" && !globalThis.mongoClientPromise)
-	globalThis.mongoClientPromise = clientPromise;
+if (env.NODE_ENV === "development" && !globalThis.mongoClientPromise) globalThis.mongoClientPromise = clientPromise;
 
 export async function connectToDatabase(dbName = "main") {
 	const client = await clientPromise;
