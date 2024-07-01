@@ -26,3 +26,11 @@ body {
 		text-wrap: balance;
 	}
 }
+
+.filepond--panel-root {
+	background-color: #1f2937 !important;
+}
+
+.filepond--drop-label {
+	color: #e2e8f0 !important;
+}

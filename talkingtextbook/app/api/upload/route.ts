@@ -11,9 +11,7 @@ export async function POST(req: NextRequest) {
 
 	if (uploadedFiles && uploadedFiles.length > 0) {
 		const uploadedFile = uploadedFiles[1];
-		console.log("Uploaded file:", uploadedFile);
 
-		// Check if uploadedFile is of type File
 		if (uploadedFile instanceof File) {
 			fileName = uuidv4();
 			const tempFilePath = `/tmp/${fileName}.pdf`;
@@ -23,20 +21,17 @@ export async function POST(req: NextRequest) {
 
 			pdfParser.on("pdfParser_dataError", (errData: any) => console.log(errData.parserError));
 
-			pdfParser.on("pdfParser_dataReady", () => {
-				console.log((pdfParser as any).getRawTextContent());
-				parsedText = (pdfParser as any).getRawTextContent();
+			const parsedTextPromise = new Promise<string>((resolve) => {
+				pdfParser.on("pdfParser_dataReady", () => {
+					parsedText = (pdfParser as any).getRawTextContent();
+					resolve(parsedText);
+				});
 			});
 
 			pdfParser.loadPDF(tempFilePath);
-		} else {
-			console.log("Uploaded file is not in the expected format.");
+			parsedText = await parsedTextPromise;
 		}
-	} else {
-		console.log("No files found.");
 	}
 
-	const response = new NextResponse(parsedText);
-	response.headers.set("FileName", fileName);
-	return response;
+	return NextResponse.json({ fileName, parsedText });
 }

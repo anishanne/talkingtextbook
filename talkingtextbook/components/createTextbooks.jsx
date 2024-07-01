@@ -7,6 +7,7 @@ import FileUpload from "@/components/upload";
 export default function CreateTextbook({ open, setOpen }) {
 	const [status, setStatus] = useState(false);
 	const [name, setName] = useState("");
+	const [text, setText] = useState("");
 	const create = async () => {
 		setStatus("loading");
 		const id = createTextbook(name);
@@ -57,8 +58,11 @@ export default function CreateTextbook({ open, setOpen }) {
 												Textbook Upload
 											</label>
 											<div className="mt-2">
-												<FileUpload />
+												<FileUpload setText={setText} />
 											</div>
+											<span className="text-gray-200">
+												{text.length > 0 && `Processed! Read ${text.length.toLocaleString()} characters.`}
+											</span>
 										</div>
 									</p>
 								</div>

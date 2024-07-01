@@ -1,20 +1,21 @@
 "use client";
+
 import { FilePond } from "react-filepond";
 import "filepond/dist/filepond.min.css";
 
-export default function FileUpload(setState) {
+export default function FileUpload({ setText }: { setText: (text: string) => void }) {
 	return (
 		<FilePond
 			server={{
-				process: "/api/upload",
+				process: {
+					url: "./api/upload",
+					onload: (response) => {
+						setText(response);
+						return response.fileName;
+					},
+				},
 				fetch: null,
 				revert: null,
-			}}
-			onupdatefiles={(fileItems) => {
-				console.log(fileItems[0]);
-				// setState({
-				// 	files: fileItems.map((fileItem) => fileItem.file),
-				// });
 			}}
 		/>
 	);
