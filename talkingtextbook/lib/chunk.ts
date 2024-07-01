@@ -2,7 +2,7 @@
 
 import { connectToDatabase } from "./mongodb";
 import { embedMany } from "ai";
-import { openai } from "@ai-sdk/openai";
+import { azure } from "@ai-sdk/azure";
 import { ObjectId } from "mongodb";
 import { RecursiveCharacterTextSplitter, CharacterTextSplitter } from "langchain/text_splitter";
 
@@ -24,10 +24,11 @@ export async function splitTextCharacter(text: string, chunkSize: number = 10, c
 }
 
 export async function train(id: ObjectId, chunks: string[]) {
+	chunks = chunks.filter((chunk) => chunk.length > 0);
 	const { textbookChunksDB } = await connectToDatabase();
 
 	const { embeddings } = await embedMany({
-		model: openai.embedding("text-embedding-3-small"),
+		model: azure.embedding("text-embedding-ada-002"),
 		values: chunks,
 	});
 
