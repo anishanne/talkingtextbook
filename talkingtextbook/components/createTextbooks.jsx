@@ -1,3 +1,5 @@
+"use client";
+
 import { useState } from "react";
 import { Dialog, DialogBackdrop, DialogPanel, DialogTitle } from "@headlessui/react";
 import { DocumentPlusIcon } from "@heroicons/react/24/outline";
@@ -5,6 +7,7 @@ import { createTextbook, trainTextbook } from "@/lib/serverActions";
 import FileUpload from "@/components/upload";
 import { splitTextRecursively, train } from "@/lib/chunk";
 import { useRouter } from "next/navigation";
+import LoadingSpinner from "@/components/loading";
 
 export default function CreateTextbook({ open, setOpen }) {
 	const router = useRouter();
@@ -15,13 +18,12 @@ export default function CreateTextbook({ open, setOpen }) {
 
 	const create = async () => {
 		setStatus("loading");
-		const id = createTextbook(name);
+		const id = await createTextbook(name);
 		const chunks = await splitTextRecursively(text);
 		train(
 			id,
 			chunks.map((chunk) => chunk.pageContent),
 		);
-		setStatus(false);
 		router.push(`/talk/${id}`);
 	};
 
@@ -83,7 +85,7 @@ export default function CreateTextbook({ open, setOpen }) {
 								className="inline-flex w-full justify-center rounded-md bg-indigo-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600 disabled:cursor-not-allowed disabled:opacity-75 disabled:hover:bg-indigo-600 sm:col-start-2"
 								onClick={create}
 								disabled={!name || !text || status}>
-								{status ? "Creating" : "Create"}
+								{status ? <LoadingSpinner /> : "Create"}
 							</button>
 							<button
 								type="button"

@@ -11,7 +11,7 @@ export async function splitTextRecursively(text: string, chunkSize: number = 10,
 		chunkSize,
 		chunkOverlap,
 	});
-	return await splitter.createDocuments([text]);
+	return (await splitter.createDocuments([text])).map((chunk) => chunk.pageContent);
 }
 
 export async function splitTextCharacter(text: string, chunkSize: number = 10, chunkOverlap: number = 1) {
@@ -20,7 +20,7 @@ export async function splitTextCharacter(text: string, chunkSize: number = 10, c
 		chunkSize,
 		chunkOverlap,
 	});
-	return await splitter.createDocuments([text]);
+	return (await splitter.createDocuments([text])).map((chunk) => chunk.pageContent);
 }
 
 export async function train(id: ObjectId, chunks: string[]) {
