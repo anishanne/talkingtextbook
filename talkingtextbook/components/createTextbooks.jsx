@@ -2,6 +2,7 @@ import { useState } from "react";
 import { Dialog, DialogBackdrop, DialogPanel, DialogTitle } from "@headlessui/react";
 import { DocumentPlusIcon } from "@heroicons/react/24/outline";
 import { createTextbook, trainTextbook } from "@/lib/serverActions";
+import FileUpload from "@/components/upload";
 
 export default function CreateTextbook({ open, setOpen }) {
 	const [status, setStatus] = useState(false);
@@ -56,12 +57,7 @@ export default function CreateTextbook({ open, setOpen }) {
 												Textbook Upload
 											</label>
 											<div className="mt-2">
-												<input
-													class="block w-full cursor-pointer rounded-lg border border-gray-700 bg-gray-800 text-sm text-gray-100 focus:outline-none"
-													id="file"
-													name="file"
-													type="file"
-												/>
+												<FileUpload />
 											</div>
 										</div>
 									</p>
