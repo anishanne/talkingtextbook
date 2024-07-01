@@ -1,6 +1,5 @@
 "use server";
 
-import z from "zod";
 import { connectToDatabase } from "./mongodb";
 
 export async function getTextbooks() {
@@ -10,6 +9,6 @@ export async function getTextbooks() {
 
 export async function createTextbooks(name: string) {
 	const { textbooksDB } = await connectToDatabase();
-	const { insertedId } = await textbooksDB.insertOne({ name });
+	const { insertedId } = await textbooksDB.insertOne({ name, created_at: new Date() });
 	return insertedId;
 }

@@ -21,6 +21,14 @@
 			"@/*": ["./*"]
 		}
 	},
-	"include": ["next-env.d.ts", "**/*.ts", "**/*.tsx", ".next/types/**/*.ts", "lib/mongodb.js"],
+	"include": [
+		"next-env.d.ts",
+		"**/*.ts",
+		"**/*.tsx",
+		".next/types/**/*.ts",
+		"lib/mongodb.js",
+		"components/createTextbooks.jsx",
+		"components/viewTextbooks.jsx"
+	],
 	"exclude": ["node_modules"]
 }

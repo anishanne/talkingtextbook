@@ -1,11 +1,13 @@
 import Link from "next/link";
+import type { WithId } from "mongodb";
 import { Dialog, DialogBackdrop, DialogPanel, DialogTitle } from "@headlessui/react";
 import { DocumentTextIcon } from "@heroicons/react/24/outline";
 import { getTextbooks } from "@/lib/serverActions";
 import { useEffect, useState } from "react";
+import { Textbook } from "@/types";
 
 export default function ViewTextbooks({ open, setOpen }: { open: boolean; setOpen: (open: boolean) => void }) {
-	const [textbooks, setTextbooks] = useState([]);
+	const [textbooks, setTextbooks] = useState<WithId<Textbook>[]>([]);
 
 	useEffect(() => {
 		(async () => setTextbooks(await getTextbooks()))();
