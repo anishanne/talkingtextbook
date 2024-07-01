@@ -10,7 +10,7 @@ export default function FileUpload({ setText }: { setText: (text: string) => voi
 				process: {
 					url: "./api/upload",
 					onload: (response) => {
-						setText(response);
+						setText(JSON.parse(response).parsedText);
 						return response.fileName;
 					},
 				},

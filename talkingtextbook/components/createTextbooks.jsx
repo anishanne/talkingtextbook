@@ -3,19 +3,28 @@ import { Dialog, DialogBackdrop, DialogPanel, DialogTitle } from "@headlessui/re
 import { DocumentPlusIcon } from "@heroicons/react/24/outline";
 import { createTextbook, trainTextbook } from "@/lib/serverActions";
 import FileUpload from "@/components/upload";
+import { splitTextRecursively, train } from "@/lib/chunk";
+import { useRouter } from "next/navigation";
 
 export default function CreateTextbook({ open, setOpen }) {
+	const router = useRouter();
+
 	const [status, setStatus] = useState(false);
 	const [name, setName] = useState("");
 	const [text, setText] = useState("");
+
 	const create = async () => {
 		setStatus("loading");
 		const id = createTextbook(name);
-		trainTextbook(
+		const chunks = await splitTextRecursively(text);
+		train(
 			id,
-			"Hello\n\nWorld\nIam cool.\nThis is a test of the chunking system. It should split this text into multiple chunks.",
+			chunks.map((chunk) => chunk.pageContent),
 		);
+		setStatus(false);
+		router.push(`/talk/${id}`);
 	};
+
 	return (
 		<Dialog className="relative z-10" open={open} onClose={setOpen}>
 			<DialogBackdrop
@@ -61,7 +70,7 @@ export default function CreateTextbook({ open, setOpen }) {
 												<FileUpload setText={setText} />
 											</div>
 											<span className="text-gray-200">
-												{text.length > 0 && `Processed! Read ${text.length.toLocaleString()} characters.`}
+												{text.length > 0 && !status && `Processed! Read ${text.length.toLocaleString()} characters.`}
 											</span>
 										</div>
 									</p>
@@ -71,9 +80,10 @@ export default function CreateTextbook({ open, setOpen }) {
 						<div className="mt-5 sm:mt-6 sm:grid sm:grid-flow-row-dense sm:grid-cols-2 sm:gap-3">
 							<button
 								type="button"
-								className="inline-flex w-full justify-center rounded-md bg-indigo-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600 sm:col-start-2"
-								onClick={create}>
-								{status === "loading" ? "Creating" : "Create"}
+								className="inline-flex w-full justify-center rounded-md bg-indigo-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600 disabled:cursor-not-allowed disabled:opacity-75 disabled:hover:bg-indigo-600 sm:col-start-2"
+								onClick={create}
+								disabled={!name || !text || status}>
+								{status ? "Creating" : "Create"}
 							</button>
 							<button
 								type="button"

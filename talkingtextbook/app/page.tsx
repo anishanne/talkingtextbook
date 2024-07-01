@@ -1,7 +1,5 @@
 "use client";
 
-import Image from "next/image";
-import Link from "next/link";
 import CreateTextbooks from "@/components/createTextbooks";
 import ViewTextbooks from "@/components/viewTextbooks";
 import { useState } from "react";
@@ -18,7 +16,7 @@ export default function Home() {
 				</div>
 			</header>
 			<main className="flex flex-grow flex-col items-center justify-center bg-gray-800 pb-20">
-				<h2 className="mb-4 text-3xl font-semibold text-indigo-500">
+				<h2 className="mx-20 mb-4 text-center text-3xl font-semibold text-indigo-500">
 					RAG Chat powered by MongoDB Vector Search + LangChain
 				</h2>
 				<div className="grid grid-cols-2 gap-2">
