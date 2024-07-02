@@ -4,7 +4,6 @@ import { connectToDatabase } from "./mongodb";
 import { embed, embedMany } from "ai";
 import { HeliconeAzure } from "./HeliconeAzure";
 import { RecursiveCharacterTextSplitter, CharacterTextSplitter } from "langchain/text_splitter";
-import { env } from "@/env";
 
 export async function splitTextRecursively(text: string, chunkSize: number = 10, chunkOverlap: number = 1) {
 	const splitter = new RecursiveCharacterTextSplitter({
