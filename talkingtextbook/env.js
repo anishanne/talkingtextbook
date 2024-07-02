@@ -6,6 +6,7 @@ const { z } = require("zod");
 const envSchema = z.object({
 	AZURE_API_KEY: z.string(),
 	AZURE_RESOURCE_NAME: z.string(),
+	HELICONE_API_KEY: z.string(),
 	MONGODB_URI: z.string(),
 	NODE_ENV: z.enum(["development", "test", "production"]),
 });
