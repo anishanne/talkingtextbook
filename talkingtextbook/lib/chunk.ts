@@ -1,7 +1,7 @@
 "use server";
 
 import { connectToDatabase } from "./mongodb";
-import { embedMany } from "ai";
+import { embed, embedMany } from "ai";
 import { azure } from "@ai-sdk/azure";
 import { ObjectId } from "mongodb";
 import { RecursiveCharacterTextSplitter, CharacterTextSplitter } from "langchain/text_splitter";
@@ -23,7 +23,7 @@ export async function splitTextCharacter(text: string, chunkSize: number = 10, c
 	return (await splitter.createDocuments([text])).map((chunk) => chunk.pageContent);
 }
 
-export async function train(id: ObjectId, chunks: string[]) {
+export async function train(id: string, chunks: string[]) {
 	chunks = chunks.filter((chunk) => chunk.length > 0);
 	const { textbookChunksDB } = await connectToDatabase();
 
@@ -39,4 +39,35 @@ export async function train(id: ObjectId, chunks: string[]) {
 	}));
 
 	await textbookChunksDB.insertMany(finalInsert);
+}
+
+export async function search(id: string, text: string) {
+	const { textbookChunksDB } = await connectToDatabase();
+	const { embedding: queryVector } = await embed({
+		model: azure.embedding("text-embedding-ada-002"),
+		value: text,
+	});
+	const pipeline = [
+		{
+			$vectorSearch: {
+				index: "vector_index",
+				filter: { textbookId: id },
+				queryVector,
+				path: "embeddings",
+				numCandidates: 100,
+				limit: 5,
+			},
+		},
+		{
+			$project: {
+				_id: 0,
+				text: 1,
+				score: {
+					$meta: "vectorSearchScore",
+				},
+			},
+		},
+	];
+
+	return textbookChunksDB.aggregate(pipeline).toArray();
 }

@@ -11,7 +11,7 @@ export interface Textbook {
 }
 
 export interface TextbookChunk {
-	textbookId: ObjectId;
+	textbookId: string;
 	text: string;
 	embeddings: number[];
 }

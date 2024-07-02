@@ -1,7 +1,6 @@
-import { splitTextRecursively, splitTextCharacter } from "@/lib/chunk";
+import { search } from "@/lib/chunk";
 
 export async function GET() {
-	const text =
-		"Hello\n\nWorld\nIam cool.\nThis is a test of the chunking system. It should split this text into multiple chunks.";
-	return Response.json({ recursive: await splitTextRecursively(text), character: await splitTextCharacter(text) });
+	const results = await search("6683723a0c5e3bac2d87d0d2", "PostgreSQL superuser password");
+	return Response.json({ data: results });
 }

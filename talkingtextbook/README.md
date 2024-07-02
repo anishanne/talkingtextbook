@@ -2,7 +2,28 @@
 
 A self-hostable platform to create learning focused chatbots based on textbooks.
 
+## Setting up MongoDB Vector Search
 
+In MongoDB Atlas, head over to the `Atlas Search` tab, select Vector Search JSON Editor, and enter the following:
+
+```json
+{
+	"fields": [
+		{
+			"numDimensions": 1536,
+			"path": "embeddings",
+			"similarity": "cosine",
+			"type": "vector"
+		},
+		{
+			"path": "textbookId",
+			"type": "filter"
+		}
+	]
+}
+```
+
+The vector shall be named `vector_index`.
 
 This is a [Next.js](https://nextjs.org/) project bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).
 

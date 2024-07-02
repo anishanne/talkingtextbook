@@ -19,7 +19,7 @@ export default function CreateTextbook({ open, setOpen }) {
 	const create = async () => {
 		setStatus("loading");
 		const id = await createTextbook(name);
-		const chunks = await splitTextRecursively(text, 100, 10);
+		const chunks = await splitTextRecursively(text, 1000, 100);
 		await train(id, chunks);
 		router.push(`/talk/${id}`);
 	};
