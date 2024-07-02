@@ -7,6 +7,7 @@ import {
 	OpenAICompletionLanguageModel,
 } from "@ai-sdk/openai/internal";
 import { loadApiKey, loadSetting } from "@ai-sdk/provider-utils";
+import { LanguageModelV1 } from "@ai-sdk/provider";
 
 export interface HeliconeAzureOpenAIProvider {
 	(deploymentId: string, settings?: OpenAIChatSettings): OpenAIChatLanguageModel;
@@ -46,7 +47,9 @@ export interface HeliconeAzureOpenAIProviderSettings {
 	/**
   API key for authenticating requests.
 	   */
-	apiKey?: string;
+	azureApiKey?: string;
+
+	heliconeApiKey?: string;
 
 	/**
   Custom headers to include in the requests.
@@ -60,18 +63,49 @@ export interface HeliconeAzureOpenAIProviderSettings {
 	fetch?: typeof fetch;
 }
 
+// type OpenAIChatConfig = {
+// 	provider: string;
+// 	compatibility: "strict" | "compatible";
+// 	headers: (name: string) => Record<string, string | undefined>;
+// 	url: (options: { modelId: string; path: string }) => string;
+// 	fetch?: typeof fetch;
+// };
+// declare class OpenAIChatLanguageModel implements LanguageModelV1 {
+// 	readonly specificationVersion = "v1";
+// 	readonly defaultObjectGenerationMode = "tool";
+// 	readonly modelId: OpenAIChatModelId;
+// 	readonly settings: OpenAIChatSettings;
+// 	private readonly config;
+// 	constructor(modelId: OpenAIChatModelId, settings: OpenAIChatSettings, config: OpenAIChatConfig);
+// 	get provider(): string;
+// 	private getArgs;
+// 	doGenerate(
+// 		options: Parameters<LanguageModelV1["doGenerate"]>[0],
+// 	): Promise<Awaited<ReturnType<LanguageModelV1["doGenerate"]>>>;
+// 	doStream(
+// 		options: Parameters<LanguageModelV1["doStream"]>[0],
+// 	): Promise<Awaited<ReturnType<LanguageModelV1["doStream"]>>>;
+// }
+
 /**
   Create an Azure OpenAI provider instance.
    */
-export function createAzure(options: AzureOpenAIProviderSettings = {}): AzureOpenAIProvider {
-	const getHeaders = () => ({
+export function createHeliconeAzure(options: HeliconeAzureOpenAIProviderSettings = {}): HeliconeAzureOpenAIProvider {
+	const getHeaders = (name: string) => ({
 		"api-key": loadApiKey({
-			apiKey: options.apiKey,
+			apiKey: options.azureApiKey,
 			environmentVariableName: "AZURE_API_KEY",
 			description: "Azure OpenAI",
+			apiKeyParameterName: "azureApiKey",
 		}),
 		"Helicone-OpenAI-Api-Base": `https://${getResourceName()}.openai.azure.com`,
-		"Helicone-Auth": `Bearer 123`,
+		"Helicone-Auth": `Bearer ${loadApiKey({
+			apiKey: options.heliconeApiKey,
+			environmentVariableName: "HELICONE_API_KEY",
+			description: "Helicone OpenAI",
+			apiKeyParameterName: "heliconeApiKey",
+		})}`,
+		"Helicone-Model-Override": modelOverride,
 		...options.headers,
 	});
 
@@ -89,7 +123,7 @@ export function createAzure(options: AzureOpenAIProviderSettings = {}): AzureOpe
 	const url = ({ path, modelId }: { path: string; modelId: string }) =>
 		`https://oai.helicone.ai/openai/deployments/${modelId}${path}?api-version=2024-05-01-preview`;
 
-	const createChatModel = (deploymentName: string, settings: OpenAIChatSettings = {}) =>
+	const createChatModel = (deploymentName: string, settings: OpenAIChatSettings = {}, modelOverride = "") =>
 		new OpenAIChatLanguageModel(deploymentName, settings, {
 			provider: "azure-openai.chat",
 			url,
@@ -98,29 +132,33 @@ export function createAzure(options: AzureOpenAIProviderSettings = {}): AzureOpe
 			fetch: options.fetch,
 		});
 
-	const createCompletionModel = (modelId: string, settings: OpenAICompletionSettings = {}) =>
+	const createCompletionModel = (modelId: string, settings: OpenAICompletionSettings = {}, modelOverride = "") =>
 		new OpenAICompletionLanguageModel(modelId, settings, {
 			provider: "azure-openai.completion",
 			url,
 			compatibility: "compatible",
-			headers: getHeaders,
+			headers: getHeaders(modelOverride),
 			fetch: options.fetch,
 		});
 
-	const createEmbeddingModel = (modelId: string, settings: OpenAIEmbeddingSettings = {}) =>
+	const createEmbeddingModel = (modelId: string, settings: OpenAIEmbeddingSettings = {}, modelOverride = "") =>
 		new OpenAIEmbeddingModel(modelId, settings, {
 			provider: "azure-openai.embeddings",
-			headers: getHeaders,
+			headers: getHeaders(modelOverride),
 			url,
 			fetch: options.fetch,
 		});
 
-	const provider = function (deploymentId: string, settings?: OpenAIChatSettings | OpenAICompletionSettings) {
+	const provider = function (
+		deploymentId: string,
+		settings?: OpenAIChatSettings | OpenAICompletionSettings,
+		modelOverride = "",
+	) {
 		if (new.target) {
 			throw new Error("The Azure OpenAI model function cannot be called with the new keyword.");
 		}
 
-		return createChatModel(deploymentId, settings as OpenAIChatSettings);
+		return createChatModel(deploymentId, settings as OpenAIChatSettings, modelOverride);
 	};
 
 	provider.languageModel = createChatModel;
@@ -129,10 +167,10 @@ export function createAzure(options: AzureOpenAIProviderSettings = {}): AzureOpe
 	provider.embedding = createEmbeddingModel;
 	provider.textEmbedding = createEmbeddingModel;
 
-	return provider as AzureOpenAIProvider;
+	return provider as HeliconeAzureOpenAIProvider;
 }
 
 /**
   Default Azure OpenAI provider instance.
    */
-export const azure = createAzure({});
+export const HeliconeAzure = createHeliconeAzure({});
