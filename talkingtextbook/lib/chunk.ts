@@ -41,7 +41,7 @@ export async function train(id: string, chunks: string[]) {
 	await textbookChunksDB.insertMany(finalInsert);
 }
 
-export async function search(id: string, text: string) {
+export async function search(id: string, text: string, limit: number = 5) {
 	const { textbookChunksDB } = await connectToDatabase();
 	const { embedding: queryVector } = await embed({
 		model: azure.embedding("text-embedding-ada-002"),
@@ -55,7 +55,7 @@ export async function search(id: string, text: string) {
 				queryVector,
 				path: "embeddings",
 				numCandidates: 100,
-				limit: 5,
+				limit,
 			},
 		},
 		{

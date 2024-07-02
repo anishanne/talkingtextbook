@@ -55,7 +55,7 @@ export default function Chat({ params }: { params: { id: string } }) {
 					setMessages(newMessages);
 					setInput("");
 
-					const result = await continueConversation(newMessages);
+					const result = await continueConversation(newMessages.slice(0, newMessages.length - 1), params.id);
 
 					for await (const content of readStreamableValue(result)) {
 						setMessages([
