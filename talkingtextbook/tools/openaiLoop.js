@@ -6,8 +6,8 @@ async function main() {
 	console.log("== Streaming Chat Completions Sample ==");
 
 	const client = new OpenAIClient(endpoint, new AzureKeyCredential(process.env.AZURE_API_KEY));
-	const deploymentId = "gpt-4-32k";
-	const events = await client.streamChatCompletions(
+	const deploymentId = "gpt-35-turbo";
+	await client.streamChatCompletions(
 		deploymentId,
 		[
 			{
