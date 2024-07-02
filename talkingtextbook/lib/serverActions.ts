@@ -9,9 +9,9 @@ export async function getTextbooks() {
 	return data.map(({ _id, ...rest }) => ({ _id: _id.toString(), ...rest }));
 }
 
-export async function getTextbook(id: ObjectId) {
+export async function getTextbook(id: string) {
 	const { textbooksDB } = await connectToDatabase();
-	const data = await textbooksDB.findOne({ _id: id });
+	const data = await textbooksDB.findOne({ _id: new ObjectId(id) });
 	if (!data) return null;
 	const { _id, ...rest } = data;
 	return { _id: _id.toString(), ...rest };
