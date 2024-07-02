@@ -7,7 +7,7 @@ import { continueConversation } from "@/lib/chat";
 import { readStreamableValue } from "ai/rsc";
 import { Textbook } from "@/types";
 import Link from "next/link";
-import Loading from "@/components/Loading";
+import Loading from "@/components/loading";
 
 // Force the page to be dynamic and allow streaming responses up to 30 seconds
 export const dynamic = "force-dynamic";
