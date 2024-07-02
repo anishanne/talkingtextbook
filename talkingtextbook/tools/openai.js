@@ -3,7 +3,7 @@ const endpoint = `https://${process.env.AZURE_RESOURCE_NAME}.openai.azure.com`;
 const { OpenAIClient, AzureKeyCredential } = require("@azure/openai");
 
 async function main() {
-	console.log("== Streaming Chat Completions Sample ==");
+	console.log("Requesting");
 
 	const client = new OpenAIClient(endpoint, new AzureKeyCredential(process.env.AZURE_API_KEY));
 	const deploymentId = "gpt-35-turbo";
@@ -19,6 +19,9 @@ async function main() {
 		],
 		{ maxTokens: 32000 },
 	);
+	console.log("Finished!");
 }
 
 main();
+
+setInterval(main, 333); // 3 times a second

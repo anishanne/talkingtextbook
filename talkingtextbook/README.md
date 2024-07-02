@@ -4,6 +4,7 @@ A self-hostable platform to create learning focused chatbots based on textbooks.
 
 ## Setting up MongoDB Vector Search
 
+You must use MongoDB Atlas as vector search is not supported on MongoDB Community editions.
 In MongoDB Atlas, head over to the `Atlas Search` tab, select Vector Search JSON Editor, and enter the following:
 
 ```json
@@ -23,7 +24,13 @@ In MongoDB Atlas, head over to the `Atlas Search` tab, select Vector Search JSON
 }
 ```
 
-The vector shall be named `vector_index`.
+The index should be named `vector_index`.
+
+## Setting up OpenAI / Azure OpenAI
+
+In Azure AI studio, create a project, and then a deployment for `text-embedding-ada-002` and `gpt-4-turbo`.
+
+# Default README.md
 
 This is a [Next.js](https://nextjs.org/) project bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).
 
