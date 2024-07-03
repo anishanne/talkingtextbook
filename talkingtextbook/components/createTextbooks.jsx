@@ -37,8 +37,8 @@ export default function CreateTextbook({ open, setOpen }) {
 						transition
 						className="relative transform overflow-hidden rounded-lg bg-black px-4 pb-4 pt-5 text-left shadow-xl transition-all data-[closed]:translate-y-4 data-[closed]:opacity-0 data-[enter]:duration-300 data-[leave]:duration-200 data-[enter]:ease-out data-[leave]:ease-in sm:my-8 sm:w-full sm:max-w-lg sm:p-6 data-[closed]:sm:translate-y-0 data-[closed]:sm:scale-95">
 						<div>
-							<div className="mx-auto flex h-12 w-12 items-center justify-center rounded-full bg-purple-100">
-								<DocumentPlusIcon className="h-6 w-6 text-purple-600" aria-hidden="true" />
+							<div className="mx-auto flex h-12 w-12 items-center justify-center rounded-full bg-indigo-100">
+								<DocumentPlusIcon className="h-6 w-6 text-indigo-600" aria-hidden="true" />
 							</div>
 							<div className="mt-3 text-center sm:mt-5">
 								<DialogTitle as="h3" className="text-base font-semibold leading-6 text-gray-100">

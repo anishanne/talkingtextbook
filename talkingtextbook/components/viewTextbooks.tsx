@@ -39,7 +39,7 @@ export default function ViewTextbooks({ open, setOpen }: { open: boolean; setOpe
 										{textbooks.map((textbook) => (
 											<>
 												{textbook.name} —{" "}
-												<Link href={`/talk/${textbook._id}`} className="underline">
+												<Link href={`/talk/${textbook._id}`} className="text-indigo-500 underline hover:no-underline">
 													Launch
 												</Link>
 												<br />
