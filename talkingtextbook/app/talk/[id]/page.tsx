@@ -26,6 +26,11 @@ export default function Chat({ params }: { params: { id: string } }) {
 	useEffect(() => {
 		getTextbook(params?.id).then(setTextbook);
 	}, [params?.id]);
+
+	useEffect(() => {
+		if (textbook) setModel(textbook.model);
+	}, [textbook]);
+
 	return (
 		<div className="stretch mx-auto flex w-full max-w-md flex-col py-24">
 			{textbook && (
