@@ -5,7 +5,7 @@ import { CoreMessage, streamText } from "ai";
 import { HeliconeAzure } from "./HeliconeAzure";
 import { search } from "./chunk";
 
-export async function continueConversation(messages: CoreMessage[], id: string) {
+export async function continueConversation(messages: CoreMessage[], id: string, model: string) {
 	if (messages[0].role !== "system") {
 		messages.unshift({
 			role: "system",
@@ -23,7 +23,7 @@ export async function continueConversation(messages: CoreMessage[], id: string) 
 		Use the relevant information to answer the question your student has asked.  Keep your answers concise, conversational, like the student is talking to a friend in the hallway, and provide answers directly to what the user has asked, nothing less and nothing more. Remember the markdown and backslash n for returns between paragraphs, because we're rendering this on a website. Please make it aesthetically pleasing. \n Provide your answer to the student below, including ##headers and **bolding**:`;
 
 	const result = await streamText({
-		model: HeliconeAzure("gpt-4-32k"),
+		model: HeliconeAzure(model),
 		messages,
 	});
 
