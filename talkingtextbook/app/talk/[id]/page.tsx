@@ -11,7 +11,7 @@ import Loading from "@/components/loading";
 import { Label, Listbox, ListboxButton, ListboxOption, ListboxOptions } from "@headlessui/react";
 import { CheckIcon, ChevronUpDownIcon } from "@heroicons/react/20/solid";
 
-const modelList = ["gpt-4o", "gpt-4", "gpt-4-32k"];
+import { modelList } from "@/config";
 
 // Force the page to be dynamic and allow streaming responses up to 30 seconds
 export const dynamic = "force-dynamic";
@@ -88,7 +88,7 @@ export default function Chat({ params }: { params: { id: string } }) {
 					setMessages(newMessages);
 					setInput("");
 
-					const result = await continueConversation(newMessages.slice(0, newMessages.length - 1), params.id);
+					const result = await continueConversation(newMessages.slice(0, newMessages.length - 1), params.id, model);
 
 					for await (const content of readStreamableValue(result)) {
 						setMessages([

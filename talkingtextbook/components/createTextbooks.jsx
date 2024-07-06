@@ -9,6 +9,8 @@ import { splitTextRecursively, train } from "@/lib/chunk";
 import { useRouter } from "next/navigation";
 import LoadingSpinner from "@/components/loading";
 
+import { modelList } from "@/config";
+
 export default function CreateTextbook({ open, setOpen }) {
 	const router = useRouter();
 
