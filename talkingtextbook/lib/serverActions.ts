@@ -17,8 +17,8 @@ export async function getTextbook(id: string) {
 	return { _id: _id.toString(), ...rest };
 }
 
-export async function createTextbook(name: string) {
+export async function createTextbook(name: string, model: string) {
 	const { textbooksDB } = await connectToDatabase();
-	const { insertedId } = await textbooksDB.insertOne({ name, created_at: new Date() });
+	const { insertedId } = await textbooksDB.insertOne({ name, model, created_at: new Date() });
 	return insertedId.toString();
 }

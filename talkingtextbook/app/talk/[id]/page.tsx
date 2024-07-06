@@ -8,7 +8,7 @@ import { readStreamableValue } from "ai/rsc";
 import { Textbook } from "@/types";
 import Link from "next/link";
 import Loading from "@/components/loading";
-import { Label, Listbox, ListboxButton, ListboxOption, ListboxOptions } from "@headlessui/react";
+import { Listbox, ListboxButton, ListboxOption, ListboxOptions } from "@headlessui/react";
 import { CheckIcon, ChevronUpDownIcon } from "@heroicons/react/20/solid";
 
 import { modelList } from "@/config";
