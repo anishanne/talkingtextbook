@@ -30,7 +30,7 @@ export default function CreateTextbook({ open, setOpen }) {
 
 	const create = async () => {
 		setStatus("loading");
-		const id = await createTextbook(name, model);
+		const id = await createTextbook(name, model, systemPrompt, chatPrompt);
 		const chunks = await splitTextRecursively(text, 1000, 100);
 		await train(id, chunks);
 		router.push(`/talk/${id}`);
@@ -187,7 +187,7 @@ export default function CreateTextbook({ open, setOpen }) {
 								type="button"
 								className="inline-flex w-full justify-center rounded-md bg-indigo-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600 disabled:cursor-not-allowed disabled:opacity-75 disabled:hover:bg-indigo-600 sm:col-start-2"
 								onClick={create}
-								disabled={!name || !text || !model || status}>
+								disabled={!name || !text || !model || !systemPrompt || !chatPrompt || status}>
 								{status ? <LoadingSpinner /> : "Create"}
 							</button>
 							<button
