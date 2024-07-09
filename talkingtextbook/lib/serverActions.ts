@@ -23,6 +23,20 @@ export async function createTextbook(name: string, model: string, chatPrompt: st
 	return insertedId.toString();
 }
 
+export async function updateTextbook(
+	id: string,
+	name: string,
+	model: string,
+	chatPrompt: string,
+	systemPrompt: string,
+) {
+	const { textbooksDB } = await connectToDatabase();
+	textbooksDB.updateOne(
+		{ _id: new ObjectId(id) },
+		{ $set: { name, model, systemPrompt, chatPrompt, created_at: new Date() } },
+	);
+}
+
 export async function updateModel(id: string, model: string) {
 	const { textbooksDB } = await connectToDatabase();
 	await textbooksDB.updateOne({ _id: new ObjectId(id) }, { $set: { model } });
