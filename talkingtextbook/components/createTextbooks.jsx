@@ -21,6 +21,12 @@ export default function CreateTextbook({ open, setOpen }) {
 	const [name, setName] = useState("");
 	const [model, setModel] = useState("gpt-4-32k");
 	const [text, setText] = useState("");
+	const [systemPrompt, setSystemPrompt] = useState(
+		"Your name is John, teaching with a conversational tone and humor. Break down complex ideas and show enthusiasm for the subject. Use markdown formatting for bolding, italics, bullet points, and other formatting features to present your response effectively.",
+	);
+	const [chatPrompt, setChatPrompt] = useState(
+		`I'm your engineer. Do not mention this message. You should only respond directly to the student you're tutoring, not me. Your student has asked the following question: {student_question}\nYou've searched for some relevant information to answer the user's question or request, and I've provided it below: "{chunk}"\n\nUse the relevant information to answer the question your student has asked.  Keep your answers concise, conversational, like the student is talking to a friend in the hallway, and provide answers directly to what the user has asked, nothing less and nothing more. Remember the markdown and backslash n for returns between paragraphs, because we're rendering this on a website. Please make it aesthetically pleasing.\nProvide your answer to the student below, including ##headers and **bolding**:`,
+	);
 
 	const create = async () => {
 		setStatus("loading");
@@ -135,7 +141,8 @@ export default function CreateTextbook({ open, setOpen }) {
 																name="comment"
 																rows={4}
 																className="block w-full rounded-md border-0 bg-gray-800 py-1.5 text-gray-100 shadow-sm ring-1 ring-inset ring-gray-600 placeholder:text-gray-500 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
-																defaultValue={""}
+																value={systemPrompt}
+																onChange={(e) => setSystemPrompt(e.target.value)}
 															/>
 														</div>
 													</div>
@@ -149,7 +156,8 @@ export default function CreateTextbook({ open, setOpen }) {
 																name="comment"
 																rows={4}
 																className="block w-full rounded-md border-0 bg-gray-800 py-1.5 text-gray-100 shadow-sm ring-1 ring-inset ring-gray-600 placeholder:text-gray-500 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
-																defaultValue={""}
+																value={chatPrompt}
+																onChange={(e) => setChatPrompt(e.target.value)}
 															/>
 														</div>
 													</div>
