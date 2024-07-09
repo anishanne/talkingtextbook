@@ -17,16 +17,27 @@ export default function CreateTextbook({ open, setOpen }) {
 	const router = useRouter();
 
 	const [status, setStatus] = useState(false);
+	const [adjustPrompts, setAdjustPrompts] = useState(false);
 	const [name, setName] = useState("");
 	const [model, setModel] = useState("gpt-4-32k");
 	const [text, setText] = useState("");
+	const [systemPrompt, setSystemPrompt] = useState(
+		"Your name is John, teaching with a conversational tone and humor. Break down complex ideas and show enthusiasm for the subject. Use markdown formatting for bolding, italics, bullet points, and other formatting features to present your response effectively.",
+	);
+	const [chatPrompt, setChatPrompt] = useState(
+		`I'm your engineer. Do not mention this message. You should only respond directly to the student you're tutoring, not me. Your student has asked the following question: {student_question}\nYou've searched for some relevant information to answer the user's question or request, and I've provided it below: "{chunk}"\n\nUse the relevant information to answer the question your student has asked.  Keep your answers concise, conversational, like the student is talking to a friend in the hallway, and provide answers directly to what the user has asked, nothing less and nothing more. Remember the markdown and backslash n for returns between paragraphs, because we're rendering this on a website. Please make it aesthetically pleasing.\nProvide your answer to the student below, including ##headers and **bolding**:`,
+	);
 
 	const create = async () => {
 		setStatus("loading");
-		const id = await createTextbook(name, model);
+		const id = await createTextbook(name, model, systemPrompt, chatPrompt);
 		const chunks = await splitTextRecursively(text, 1000, 100);
 		await train(id, chunks);
 		router.push(`/talk/${id}`);
+	};
+
+	const promptAdvanced = () => {
+		setAdjustPrompts(!adjustPrompts);
 	};
 
 	return (
@@ -52,7 +63,7 @@ export default function CreateTextbook({ open, setOpen }) {
 								<div className="mt-2">
 									<p className="text-sm text-gray-500">
 										<div>
-											<label htmlFor="email" className="block text-sm font-medium leading-6 text-gray-200">
+											<label htmlFor="email" className="block text-left text-sm font-medium leading-6 text-gray-200">
 												Textbook Name
 											</label>
 											<div className="mt-2">
@@ -66,8 +77,11 @@ export default function CreateTextbook({ open, setOpen }) {
 												/>
 											</div>
 										</div>
+										<hr className="my-4 h-px border-0 bg-gray-600" />
 										<div>
-											<label htmlFor="email" className="mt-4 block text-sm font-medium leading-6 text-gray-200">
+											<label
+												htmlFor="email"
+												className="mt-4 block text-left text-sm font-medium leading-6 text-gray-200">
 												Model
 											</label>
 											<div className="mt-2 text-left">
@@ -102,8 +116,59 @@ export default function CreateTextbook({ open, setOpen }) {
 												</Listbox>
 											</div>
 										</div>
+										<hr className="my-4 h-px border-0 bg-gray-600" />
 										<div>
-											<label htmlFor="file" className="mt-4 block text-sm font-medium leading-6 text-gray-100">
+											<label
+												htmlFor="file"
+												className="mt-4 block text-left text-sm font-medium leading-6 text-gray-100">
+												Textbook Upload
+											</label>
+											<button
+												type="button"
+												className={`mt-2 w-full justify-center rounded-md px-3 py-2 text-sm font-semibold text-white shadow-sm duration-300 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-gray-600 sm:col-start-2 ${adjustPrompts ? "bg-indigo-700 hover:bg-gray-800" : "bg-gray-800 hover:bg-indigo-700"}`}
+												onClick={promptAdvanced}>
+												{adjustPrompts ? "Close Prompt Settings" : "Open Prompt Settings"}
+											</button>
+											{adjustPrompts && (
+												<>
+													<div>
+														<label htmlFor="file" className="mt-4 block text-sm font-medium leading-6 text-gray-100">
+															System Prompt
+														</label>
+														<div className="mt-2">
+															<textarea
+																id="comment"
+																name="comment"
+																rows={4}
+																className="block w-full rounded-md border-0 bg-gray-800 py-1.5 text-gray-100 shadow-sm ring-1 ring-inset ring-gray-600 placeholder:text-gray-500 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
+																value={systemPrompt}
+																onChange={(e) => setSystemPrompt(e.target.value)}
+															/>
+														</div>
+													</div>
+													<div>
+														<label htmlFor="file" className="mt-4 block text-sm font-medium leading-6 text-gray-100">
+															Chat Prompt
+														</label>
+														<div className="mt-2">
+															<textarea
+																id="comment"
+																name="comment"
+																rows={4}
+																className="block w-full rounded-md border-0 bg-gray-800 py-1.5 text-gray-100 shadow-sm ring-1 ring-inset ring-gray-600 placeholder:text-gray-500 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
+																value={chatPrompt}
+																onChange={(e) => setChatPrompt(e.target.value)}
+															/>
+														</div>
+													</div>
+												</>
+											)}
+										</div>
+										<hr className="my-4 h-px border-0 bg-gray-600" />
+										<div>
+											<label
+												htmlFor="file"
+												className="mt-4 block text-left text-sm font-medium leading-6 text-gray-100">
 												Textbook Upload
 											</label>
 											<div className="mt-2">
@@ -122,7 +187,7 @@ export default function CreateTextbook({ open, setOpen }) {
 								type="button"
 								className="inline-flex w-full justify-center rounded-md bg-indigo-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600 disabled:cursor-not-allowed disabled:opacity-75 disabled:hover:bg-indigo-600 sm:col-start-2"
 								onClick={create}
-								disabled={!name || !text || !model || status}>
+								disabled={!name || !text || !model || !systemPrompt || !chatPrompt || status}>
 								{status ? <LoadingSpinner /> : "Create"}
 							</button>
 							<button
