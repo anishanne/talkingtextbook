@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { Dialog, DialogBackdrop, DialogPanel, DialogTitle } from "@headlessui/react";
 import { DocumentPlusIcon } from "@heroicons/react/24/outline";
+import { ExclamationTriangleIcon } from "@heroicons/react/20/solid";
 import { createTextbook, trainTextbook } from "@/lib/serverActions";
 import FileUpload from "@/components/upload";
 import { splitTextRecursively, train } from "@/lib/chunk";
@@ -182,12 +183,43 @@ export default function CreateTextbook({ open, setOpen }) {
 								</div>
 							</div>
 						</div>
+
+						{(!chatPrompt.includes("{student_question}") || !chatPrompt.includes("{chunk}")) && (
+							<div className="rounded-md bg-yellow-50 p-4">
+								<div className="flex">
+									<div className="flex-shrink-0">
+										<ExclamationTriangleIcon aria-hidden="true" className="h-5 w-5 text-yellow-400" />
+									</div>
+									<div className="ml-3">
+										<h3 className="text-sm font-medium text-yellow-800">Chat Prompt Issue</h3>
+										<div className="mt-2 text-sm text-yellow-700">
+											<p>
+												The following variables need to be included in the chat prompt:
+												<br />- <code>{"{student_question}"}</code>{" "}
+												{chatPrompt.includes("{student_question}") ? "✅" : "❌"}
+												<br />- <code>{"{chunk}"}</code> {chatPrompt.includes("{chunk}") ? "✅" : "❌"}
+											</p>
+										</div>
+									</div>
+								</div>
+							</div>
+						)}
+
 						<div className="mt-5 sm:mt-6 sm:grid sm:grid-flow-row-dense sm:grid-cols-2 sm:gap-3">
 							<button
 								type="button"
 								className="inline-flex w-full justify-center rounded-md bg-indigo-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600 disabled:cursor-not-allowed disabled:opacity-75 disabled:hover:bg-indigo-600 sm:col-start-2"
 								onClick={create}
-								disabled={!name || !text || !model || !systemPrompt || !chatPrompt || status}>
+								disabled={
+									!name ||
+									!text ||
+									!model ||
+									!systemPrompt ||
+									!chatPrompt ||
+									!chatPrompt.includes("{student_question}") ||
+									!chatPrompt.includes("{chunk}") ||
+									status
+								}>
 								{status ? <LoadingSpinner /> : "Create"}
 							</button>
 							<button
