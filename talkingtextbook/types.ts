@@ -8,6 +8,7 @@ declare global {
 export interface Textbook {
 	name: string;
 	created_at: Date;
+	model: string;
 }
 
 export interface TextbookChunk {
