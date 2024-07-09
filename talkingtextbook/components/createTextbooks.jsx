@@ -17,6 +17,7 @@ export default function CreateTextbook({ open, setOpen }) {
 	const router = useRouter();
 
 	const [status, setStatus] = useState(false);
+	const [adjustPrompts, setAdjustPrompts] = useState(false);
 	const [name, setName] = useState("");
 	const [model, setModel] = useState("gpt-4-32k");
 	const [text, setText] = useState("");
@@ -27,6 +28,10 @@ export default function CreateTextbook({ open, setOpen }) {
 		const chunks = await splitTextRecursively(text, 1000, 100);
 		await train(id, chunks);
 		router.push(`/talk/${id}`);
+	};
+
+	const promptAdvanced = () => {
+		setAdjustPrompts(!adjustPrompts);
 	};
 
 	return (
@@ -52,7 +57,7 @@ export default function CreateTextbook({ open, setOpen }) {
 								<div className="mt-2">
 									<p className="text-sm text-gray-500">
 										<div>
-											<label htmlFor="email" className="block text-sm font-medium leading-6 text-gray-200">
+											<label htmlFor="email" className="block text-left text-sm font-medium leading-6 text-gray-200">
 												Textbook Name
 											</label>
 											<div className="mt-2">
@@ -66,8 +71,11 @@ export default function CreateTextbook({ open, setOpen }) {
 												/>
 											</div>
 										</div>
+										<hr className="my-4 h-px border-0 bg-gray-600" />
 										<div>
-											<label htmlFor="email" className="mt-4 block text-sm font-medium leading-6 text-gray-200">
+											<label
+												htmlFor="email"
+												className="mt-4 block text-left text-sm font-medium leading-6 text-gray-200">
 												Model
 											</label>
 											<div className="mt-2 text-left">
@@ -102,8 +110,57 @@ export default function CreateTextbook({ open, setOpen }) {
 												</Listbox>
 											</div>
 										</div>
+										<hr className="my-4 h-px border-0 bg-gray-600" />
 										<div>
-											<label htmlFor="file" className="mt-4 block text-sm font-medium leading-6 text-gray-100">
+											<label
+												htmlFor="file"
+												className="mt-4 block text-left text-sm font-medium leading-6 text-gray-100">
+												Textbook Upload
+											</label>
+											<button
+												type="button"
+												className={`mt-2 w-full justify-center rounded-md px-3 py-2 text-sm font-semibold text-white shadow-sm duration-300 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-gray-600 sm:col-start-2 ${adjustPrompts ? "bg-indigo-700 hover:bg-gray-800" : "bg-gray-800 hover:bg-indigo-700"}`}
+												onClick={promptAdvanced}>
+												{adjustPrompts ? "Close Prompt Settings" : "Open Prompt Settings"}
+											</button>
+											{adjustPrompts && (
+												<>
+													<div>
+														<label htmlFor="file" className="mt-4 block text-sm font-medium leading-6 text-gray-100">
+															System Prompt
+														</label>
+														<div className="mt-2">
+															<textarea
+																id="comment"
+																name="comment"
+																rows={4}
+																className="block w-full rounded-md border-0 bg-gray-800 py-1.5 text-gray-100 shadow-sm ring-1 ring-inset ring-gray-600 placeholder:text-gray-500 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
+																defaultValue={""}
+															/>
+														</div>
+													</div>
+													<div>
+														<label htmlFor="file" className="mt-4 block text-sm font-medium leading-6 text-gray-100">
+															Chat Prompt
+														</label>
+														<div className="mt-2">
+															<textarea
+																id="comment"
+																name="comment"
+																rows={4}
+																className="block w-full rounded-md border-0 bg-gray-800 py-1.5 text-gray-100 shadow-sm ring-1 ring-inset ring-gray-600 placeholder:text-gray-500 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
+																defaultValue={""}
+															/>
+														</div>
+													</div>
+												</>
+											)}
+										</div>
+										<hr className="my-4 h-px border-0 bg-gray-600" />
+										<div>
+											<label
+												htmlFor="file"
+												className="mt-4 block text-left text-sm font-medium leading-6 text-gray-100">
 												Textbook Upload
 											</label>
 											<div className="mt-2">
