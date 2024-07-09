@@ -2,7 +2,7 @@
 
 import { type CoreMessage } from "ai";
 import { useEffect, useState } from "react";
-import { getTextbook } from "@/lib/serverActions";
+import { getTextbook, updateModel } from "@/lib/serverActions";
 import { continueConversation } from "@/lib/chat";
 import { readStreamableValue } from "ai/rsc";
 import { Textbook } from "@/types";
@@ -18,18 +18,26 @@ export const dynamic = "force-dynamic";
 export const maxDuration = 30;
 
 export default function Chat({ params }: { params: { id: string } }) {
+	const [id, setId] = useState(params.id);
 	const [textbook, setTextbook] = useState<Textbook | null>(null);
-	const [messages, setMessages] = useState<CoreMessage[]>([{ role: "assistant", content: "Hello!" }]);
+	const [messages, setMessages] = useState<Array<CoreMessage & { model?: string }>>([
+		{ role: "assistant", content: "Hello!", model: "" },
+	]);
 	const [input, setInput] = useState("");
 	const [model, setModel] = useState("gpt-4o");
 
 	useEffect(() => {
 		getTextbook(params?.id).then(setTextbook);
+		setId(params?.id);
 	}, [params?.id]);
 
 	useEffect(() => {
-		if (textbook) setModel(textbook.model);
+		if (textbook?.model) setModel(textbook.model);
 	}, [textbook]);
+
+	useEffect(() => {
+		updateModel(id, model);
+	}, [model]);
 
 	return (
 		<div className="stretch mx-auto flex w-full max-w-md flex-col py-24">
@@ -75,7 +83,7 @@ export default function Chat({ params }: { params: { id: string } }) {
 						"mt-2 flex whitespace-pre-wrap rounded-md p-2 " +
 						(m.role === "user" ? "bg-blue-600 text-right" : "bg-gray-700")
 					}>
-					{m.role === "user" ? "User: " : "AI: "}
+					{m.role === "user" ? "User: " : `${m.model || "AI"}: `}
 					{!m.content && <Loading />}
 					{m.content as string}
 				</div>
@@ -101,6 +109,7 @@ export default function Chat({ params }: { params: { id: string } }) {
 							{
 								role: "assistant",
 								content: content as string,
+								model,
 							},
 						]);
 					}

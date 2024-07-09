@@ -22,3 +22,8 @@ export async function createTextbook(name: string, model: string) {
 	const { insertedId } = await textbooksDB.insertOne({ name, model, created_at: new Date() });
 	return insertedId.toString();
 }
+
+export async function updateModel(id: string, model: string) {
+	const { textbooksDB } = await connectToDatabase();
+	await textbooksDB.updateOne({ _id: new ObjectId(id) }, { $set: { model } });
+}
