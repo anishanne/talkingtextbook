@@ -9,6 +9,8 @@ export interface Textbook {
 	name: string;
 	created_at: Date;
 	model: string;
+	chatPrompt: string;
+	systemPrompt: string;
 }
 
 export interface TextbookChunk {
