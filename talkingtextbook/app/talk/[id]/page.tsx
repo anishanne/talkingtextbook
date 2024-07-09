@@ -20,7 +20,7 @@ export const maxDuration = 30;
 export default function Chat({ params }: { params: { id: string } }) {
 	const [id, setId] = useState(params.id);
 	const [textbook, setTextbook] = useState<Textbook | null>(null);
-	const [messages, setMessages] = useState<CoreMessage & { model?: string }[]>([
+	const [messages, setMessages] = useState<Array<CoreMessage & { model?: string }>>([
 		{ role: "assistant", content: "Hello!", model: "" },
 	]);
 	const [input, setInput] = useState("");
