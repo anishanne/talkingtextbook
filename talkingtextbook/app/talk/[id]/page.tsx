@@ -83,7 +83,7 @@ export default function Chat({ params }: { params: { id: string } }) {
 						"mt-2 flex whitespace-pre-wrap rounded-md p-2 " +
 						(m.role === "user" ? "bg-blue-600 text-right" : "bg-gray-700")
 					}>
-					{m.role === "user" ? "User: " : "AI: "}
+					{m.role === "user" ? "User: " : `${m.model || "AI"}: `}
 					{!m.content && <Loading />}
 					{m.content as string}
 				</div>
@@ -109,6 +109,7 @@ export default function Chat({ params }: { params: { id: string } }) {
 							{
 								role: "assistant",
 								content: content as string,
+								model,
 							},
 						]);
 					}
