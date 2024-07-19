@@ -9,7 +9,8 @@ import { Textbook } from "@/types";
 import Link from "next/link";
 import Loading from "@/components/loading";
 import { Listbox, ListboxButton, ListboxOption, ListboxOptions } from "@headlessui/react";
-import { CheckIcon, ChevronUpDownIcon } from "@heroicons/react/20/solid";
+import { CheckIcon, ChevronUpDownIcon, Cog6ToothIcon } from "@heroicons/react/20/solid";
+import UpdateTextbook from "@/components/editTextbook";
 
 import { modelList } from "@/config";
 
@@ -20,6 +21,7 @@ export const maxDuration = 30;
 export default function Chat({ params }: { params: { id: string } }) {
 	const [id, setId] = useState(params.id);
 	const [textbook, setTextbook] = useState<Textbook | null>(null);
+	const [openSettings, setOpenSettings] = useState(false);
 	const [messages, setMessages] = useState<Array<CoreMessage & { model?: string }>>([
 		{ role: "assistant", content: "Hello!", model: "" },
 	]);
@@ -50,7 +52,7 @@ export default function Chat({ params }: { params: { id: string } }) {
 					<Listbox value={model} onChange={setModel}>
 						<div className="relative">
 							<ListboxButton className="relative w-full cursor-default rounded-md bg-gray-800 py-1.5 pl-3 pr-10 text-left text-gray-100 shadow-sm ring-1 ring-inset ring-gray-600 focus:outline-none focus:ring-2 focus:ring-indigo-600 sm:text-sm sm:leading-6">
-								<span className="block min-w-24 truncate">{model}</span>
+								<span className="block min-w-20 truncate">{model}</span>
 								<span className="pointer-events-none absolute inset-y-0 right-0 flex items-center pr-2">
 									<ChevronUpDownIcon aria-hidden="true" className="h-5 w-5 text-gray-400" />
 								</span>
@@ -74,6 +76,12 @@ export default function Chat({ params }: { params: { id: string } }) {
 							</ListboxOptions>
 						</div>
 					</Listbox>
+					<button
+						onClick={() => {
+							setOpenSettings(true);
+						}}>
+						<Cog6ToothIcon className="ml-2 h-8 w-8 hover:text-indigo-600" />
+					</button>
 				</div>
 			)}
 			{messages.map((m, i) => (
@@ -125,6 +133,7 @@ export default function Chat({ params }: { params: { id: string } }) {
 					onChange={(e) => setInput(e.target.value)}
 				/>
 			</form>
+			<UpdateTextbook open={openSettings} setOpen={setOpenSettings} id={id} textbook={textbook} />
 		</div>
 	);
 }
