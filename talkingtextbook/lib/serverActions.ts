@@ -41,3 +41,8 @@ export async function updateModel(id: string, model: string) {
 	const { textbooksDB } = await connectToDatabase();
 	await textbooksDB.updateOne({ _id: new ObjectId(id) }, { $set: { model } });
 }
+
+export async function deleteTextbook(id: string) {
+	const { textbooksDB } = await connectToDatabase();
+	await textbooksDB.deleteOne({ _id: new ObjectId(id) });
+}

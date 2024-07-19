@@ -1,16 +1,14 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Dialog, DialogBackdrop, DialogPanel, DialogTitle } from "@headlessui/react";
 import { DocumentPlusIcon } from "@heroicons/react/24/outline";
 import { ExclamationTriangleIcon } from "@heroicons/react/20/solid";
-import { updateTextbook } from "@/lib/serverActions";
-import FileUpload from "@/components/upload";
-import { splitTextRecursively, train } from "@/lib/chunk";
-import { useRouter } from "next/navigation";
+import { updateTextbook, deleteTextbook } from "@/lib/serverActions";
 import LoadingSpinner from "@/components/loading";
 import { Listbox, ListboxButton, ListboxOption, ListboxOptions } from "@headlessui/react";
 import { CheckIcon, ChevronUpDownIcon } from "@heroicons/react/20/solid";
+import { useRouter } from "next/navigation";
 
 import { modelList } from "@/config";
 
@@ -30,19 +28,25 @@ export default function UpdateTextbook({ open, setOpen, id, textbook }) {
 
 	const save = async () => {
 		setStatus("loading");
-		await updateTextbook(id, name, model, systemPrompt, chatPrompt);
+		await updateTextbook(id, name, model, chatPrompt, systemPrompt);
+		console.log("reload");
+		window.location.reload();
 	};
 
 	const promptAdvanced = () => {
 		setAdjustPrompts(!adjustPrompts);
 	};
 
-	useState(() => {
-		setName(textbook.name);
-		setModel(textbook.model);
-		setSystemPrompt(textbook.systemPrompt);
-		setChatPrompt(textbook.chatPrompt);
+	useEffect(() => {
+		if (textbook) {
+			setName(textbook.name);
+			setModel(textbook.model);
+			if (textbook.systemPrompt) setSystemPrompt(textbook.systemPrompt);
+			if (textbook.chatPrompt) setChatPrompt(textbook.chatPrompt);
+		}
 	}, [textbook]);
+
+	if (!textbook) return null;
 
 	return (
 		<Dialog className="relative z-10" open={open} onClose={setOpen}>
@@ -62,10 +66,17 @@ export default function UpdateTextbook({ open, setOpen, id, textbook }) {
 							</div>
 							<div className="mt-3 text-center sm:mt-5">
 								<DialogTitle as="h3" className="text-base font-semibold leading-6 text-gray-100">
-									Edit Textbook
+									Edit Textbook —{" "}
+									<button
+										className="underline hover:text-indigo-600"
+										onClick={() => {
+											deleteTextbook(id);
+										}}>
+										Delete
+									</button>
 								</DialogTitle>
 								<div className="mt-2">
-									<p className="text-sm text-gray-500">
+									<div className="text-sm text-gray-500">
 										<div>
 											<label htmlFor="email" className="block text-left text-sm font-medium leading-6 text-gray-200">
 												Textbook Name
@@ -78,6 +89,7 @@ export default function UpdateTextbook({ open, setOpen, id, textbook }) {
 													className="block w-full rounded-md border-0 bg-gray-800 py-1.5 text-gray-200 shadow-sm ring-1 ring-inset ring-gray-700 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
 													placeholder="English 101"
 													onChange={(e) => setName(e.target.value)}
+													value={name}
 												/>
 											</div>
 										</div>
@@ -125,7 +137,7 @@ export default function UpdateTextbook({ open, setOpen, id, textbook }) {
 											<label
 												htmlFor="file"
 												className="mt-4 block text-left text-sm font-medium leading-6 text-gray-100">
-												Textbook Upload
+												Prompt Management
 											</label>
 											<button
 												type="button"
@@ -168,7 +180,7 @@ export default function UpdateTextbook({ open, setOpen, id, textbook }) {
 												</>
 											)}
 										</div>
-									</p>
+									</div>
 								</div>
 							</div>
 						</div>
@@ -206,7 +218,11 @@ export default function UpdateTextbook({ open, setOpen, id, textbook }) {
 									!chatPrompt ||
 									!chatPrompt.includes("{student_question}") ||
 									!chatPrompt.includes("{chunk}") ||
-									status
+									status ||
+									(name === textbook.name &&
+										model === textbook.model &&
+										systemPrompt === textbook.systemPrompt &&
+										chatPrompt === textbook.chatPrompt)
 								}>
 								{status ? <LoadingSpinner /> : "Save"}
 							</button>
