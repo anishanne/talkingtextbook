@@ -4,7 +4,7 @@ import { useState, useEffect } from "react";
 import { Dialog, DialogBackdrop, DialogPanel, DialogTitle } from "@headlessui/react";
 import { DocumentPlusIcon } from "@heroicons/react/24/outline";
 import { ExclamationTriangleIcon } from "@heroicons/react/20/solid";
-import { updateTextbook } from "@/lib/serverActions";
+import { updateTextbook, deleteTextbook } from "@/lib/serverActions";
 import LoadingSpinner from "@/components/loading";
 import { Listbox, ListboxButton, ListboxOption, ListboxOptions } from "@headlessui/react";
 import { CheckIcon, ChevronUpDownIcon } from "@heroicons/react/20/solid";
@@ -66,7 +66,14 @@ export default function UpdateTextbook({ open, setOpen, id, textbook }) {
 							</div>
 							<div className="mt-3 text-center sm:mt-5">
 								<DialogTitle as="h3" className="text-base font-semibold leading-6 text-gray-100">
-									Edit Textbook
+									Edit Textbook —{" "}
+									<button
+										className="underline hover:text-indigo-600"
+										onClick={() => {
+											deleteTextbook(id);
+										}}>
+										Delete
+									</button>
 								</DialogTitle>
 								<div className="mt-2">
 									<div className="text-sm text-gray-500">
@@ -130,7 +137,7 @@ export default function UpdateTextbook({ open, setOpen, id, textbook }) {
 											<label
 												htmlFor="file"
 												className="mt-4 block text-left text-sm font-medium leading-6 text-gray-100">
-												Textbook Upload
+												Prompt Management
 											</label>
 											<button
 												type="button"
