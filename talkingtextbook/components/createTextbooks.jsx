@@ -23,6 +23,8 @@ export default function CreateTextbook({ open, setOpen }) {
 	const [model, setModel] = useState("gpt-4-32k");
 	const [text, setText] = useState("");
 	const [chunkCount, setChunkCount] = useState(1);
+	const [chunkSize, setChunkSize] = useState(1000);
+	const [chunkOverlap, setChunkOverlap] = useState(100);
 	const [systemPrompt, setSystemPrompt] = useState(
 		"Your name is John, teaching with a conversational tone and humor. Break down complex ideas and show enthusiasm for the subject. Use markdown formatting for bolding, italics, bullet points, and other formatting features to present your response effectively.",
 	);
@@ -33,7 +35,7 @@ export default function CreateTextbook({ open, setOpen }) {
 	const create = async () => {
 		setStatus("loading");
 		const id = await createTextbook(name, model, systemPrompt, chatPrompt, chunkCount);
-		const chunks = await splitTextRecursively(text, 1000, 100);
+		const chunks = await splitTextRecursively(text, chunkSize, chunkOverlap);
 		await train(id, chunks);
 		router.push(`/talk/${id}`);
 	};
@@ -184,6 +186,42 @@ export default function CreateTextbook({ open, setOpen }) {
 																min={1}
 																max={10}
 																onChange={(e) => setChunkCount(e.target.value)}
+															/>
+														</div>
+													</div>
+													<div>
+														<label
+															htmlFor="email"
+															className="mt-4 block text-left text-sm font-medium leading-6 text-gray-200">
+															Chunk Size
+														</label>
+														<div className="mt-2">
+															<input
+																type="number"
+																name="chunkSize"
+																id="chunkSize"
+																className="block w-full rounded-md border-0 bg-gray-800 py-1.5 text-gray-200 shadow-sm ring-1 ring-inset ring-gray-700 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
+																placeholder="1"
+																value={chunkSize}
+																onChange={(e) => setChunkSize(e.target.value)}
+															/>
+														</div>
+													</div>
+													<div>
+														<label
+															htmlFor="email"
+															className="mt-4 block text-left text-sm font-medium leading-6 text-gray-200">
+															Chunk Overlap
+														</label>
+														<div className="mt-2">
+															<input
+																type="number"
+																name="chunkOverlap"
+																id="chunkOverlap"
+																className="block w-full rounded-md border-0 bg-gray-800 py-1.5 text-gray-200 shadow-sm ring-1 ring-inset ring-gray-700 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
+																placeholder="1"
+																value={chunkOverlap}
+																onChange={(e) => setChunkOverlap(e.target.value)}
 															/>
 														</div>
 													</div>
