@@ -17,9 +17,22 @@ export async function getTextbook(id: string) {
 	return { _id: _id.toString(), ...rest };
 }
 
-export async function createTextbook(name: string, model: string, chatPrompt: string, systemPrompt: string) {
+export async function createTextbook(
+	name: string,
+	model: string,
+	chatPrompt: string,
+	systemPrompt: string,
+	chunkCount: number,
+) {
 	const { textbooksDB } = await connectToDatabase();
-	const { insertedId } = await textbooksDB.insertOne({ name, model, systemPrompt, chatPrompt, created_at: new Date() });
+	const { insertedId } = await textbooksDB.insertOne({
+		name,
+		model,
+		systemPrompt,
+		chatPrompt,
+		created_at: new Date(),
+		chunkCount,
+	});
 	return insertedId.toString();
 }
 
@@ -29,11 +42,12 @@ export async function updateTextbook(
 	model: string,
 	chatPrompt: string,
 	systemPrompt: string,
+	chunkCount: number,
 ) {
 	const { textbooksDB } = await connectToDatabase();
 	textbooksDB.updateOne(
 		{ _id: new ObjectId(id) },
-		{ $set: { name, model, systemPrompt, chatPrompt, created_at: new Date() } },
+		{ $set: { name, model, systemPrompt, chatPrompt, created_at: new Date(), chunkCount } },
 	);
 }
 

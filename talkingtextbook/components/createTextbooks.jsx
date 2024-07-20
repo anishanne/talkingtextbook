@@ -4,7 +4,7 @@ import { useState } from "react";
 import { Dialog, DialogBackdrop, DialogPanel, DialogTitle } from "@headlessui/react";
 import { DocumentPlusIcon } from "@heroicons/react/24/outline";
 import { ExclamationTriangleIcon } from "@heroicons/react/20/solid";
-import { createTextbook, trainTextbook } from "@/lib/serverActions";
+import { createTextbook } from "@/lib/serverActions";
 import FileUpload from "@/components/upload";
 import { splitTextRecursively, train } from "@/lib/chunk";
 import { useRouter } from "next/navigation";
@@ -22,6 +22,7 @@ export default function CreateTextbook({ open, setOpen }) {
 	const [name, setName] = useState("");
 	const [model, setModel] = useState("gpt-4-32k");
 	const [text, setText] = useState("");
+	const [chunkCount, setChunkCount] = useState(1);
 	const [systemPrompt, setSystemPrompt] = useState(
 		"Your name is John, teaching with a conversational tone and humor. Break down complex ideas and show enthusiasm for the subject. Use markdown formatting for bolding, italics, bullet points, and other formatting features to present your response effectively.",
 	);
@@ -31,7 +32,7 @@ export default function CreateTextbook({ open, setOpen }) {
 
 	const create = async () => {
 		setStatus("loading");
-		const id = await createTextbook(name, model, systemPrompt, chatPrompt);
+		const id = await createTextbook(name, model, systemPrompt, chatPrompt, chunkCount);
 		const chunks = await splitTextRecursively(text, 1000, 100);
 		await train(id, chunks);
 		router.push(`/talk/${id}`);
@@ -122,18 +123,20 @@ export default function CreateTextbook({ open, setOpen }) {
 											<label
 												htmlFor="file"
 												className="mt-4 block text-left text-sm font-medium leading-6 text-gray-100">
-												Textbook Upload
+												Advanced Settings
 											</label>
 											<button
 												type="button"
 												className={`mt-2 w-full justify-center rounded-md px-3 py-2 text-sm font-semibold text-white shadow-sm duration-300 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-gray-600 sm:col-start-2 ${adjustPrompts ? "bg-indigo-700 hover:bg-gray-800" : "bg-gray-800 hover:bg-indigo-700"}`}
 												onClick={promptAdvanced}>
-												{adjustPrompts ? "Close Prompt Settings" : "Open Prompt Settings"}
+												{adjustPrompts ? "Close Advanced Prompt Settings" : "Open Advanced Prompt Settings"}
 											</button>
 											{adjustPrompts && (
 												<>
 													<div>
-														<label htmlFor="file" className="mt-4 block text-sm font-medium leading-6 text-gray-100">
+														<label
+															htmlFor="file"
+															className="mt-4 block text-left text-sm font-medium leading-6 text-gray-100">
 															System Prompt
 														</label>
 														<div className="mt-2">
@@ -148,7 +151,9 @@ export default function CreateTextbook({ open, setOpen }) {
 														</div>
 													</div>
 													<div>
-														<label htmlFor="file" className="mt-4 block text-sm font-medium leading-6 text-gray-100">
+														<label
+															htmlFor="file"
+															className="mt-4 block text-left text-sm font-medium leading-6 text-gray-100">
 															Chat Prompt
 														</label>
 														<div className="mt-2">
@@ -159,6 +164,26 @@ export default function CreateTextbook({ open, setOpen }) {
 																className="block w-full rounded-md border-0 bg-gray-800 py-1.5 text-gray-100 shadow-sm ring-1 ring-inset ring-gray-600 placeholder:text-gray-500 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
 																value={chatPrompt}
 																onChange={(e) => setChatPrompt(e.target.value)}
+															/>
+														</div>
+													</div>
+													<div>
+														<label
+															htmlFor="email"
+															className="mt-4 block text-left text-sm font-medium leading-6 text-gray-200">
+															Chunk Count
+														</label>
+														<div className="mt-2">
+															<input
+																type="number"
+																name="chunkCount"
+																id="chunkCount"
+																className="block w-full rounded-md border-0 bg-gray-800 py-1.5 text-gray-200 shadow-sm ring-1 ring-inset ring-gray-700 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
+																placeholder="1"
+																value={chunkCount}
+																min={1}
+																max={10}
+																onChange={(e) => setChunkCount(e.target.value)}
 															/>
 														</div>
 													</div>
